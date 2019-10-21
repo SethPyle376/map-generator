@@ -35,16 +35,16 @@ function centroid(points) {
     return [x/points.length, y/points.length];
 }
 
-function drawCircle() {
-    d3.select("body").append("svg").attr("width", 50).attr("height", 50).append("circle").attr("cx", 25).attr("cy", 25).attr("r", 25).style("fill", "purple");
-}
-
 function generateSmoothPoints(num, dimension) {
+    var svg1 = buildSvg(dimension);
+    var svg2 = buildSvg(dimension);
     var points = generatePoints(num, dimension);
     points = points.sort(function (a, b) {
         return a[0] - b[0];
     });
+    drawPoints(svg1, points);
     points = smoothPoints(points, 1, dimension);
+    drawPoints(svg2, points);
     return points;
 }
 
@@ -118,18 +118,18 @@ function generateMesh(points, dimension) {
 function generateSmoothMesh(num, dimension) {
     var points = generateSmoothPoints(num, dimension);
     var mesh = generateMesh(points, dimension);
-    console.log(mesh);
-    drawMesh(buildSvg(1000), mesh);
+    var svg = buildSvg(dimension);
+    drawMesh(svg, mesh);
 }
 
-function visualizePoints(svg, points) {
+function drawPoints(svg, points) {
     var circle = svg.selectAll('circle').data(points);
     circle.enter().append("circle");
     circle.exit().remove();
     d3.selectAll('circle')
         .attr('cx', function (d) { return d[0]; })
         .attr('cy', function (d) { return d[1]; })
-        .attr('r', 1);
+        .attr('r', 2);
 }
 
 function drawTriangle(tri) {
