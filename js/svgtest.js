@@ -40,8 +40,6 @@ function drawCircle() {
 }
 
 function generateSmoothPoints(num, dimension) {
-    var svg = buildSvg(dimension);
-    var svg2 = buildSvg(dimension);
     var points = generatePoints(num, dimension);
     points = points.sort(function (a, b) {
         return a[0] - b[0];
@@ -114,13 +112,14 @@ function generateMesh(points, dimension) {
         mapped.mesh = mesh;
         return mapped;
     }
-    console.log(mesh);
     return mesh;
 }
 
 function generateSmoothMesh(num, dimension) {
     var points = generateSmoothPoints(num, dimension);
     var mesh = generateMesh(points, dimension);
+    console.log(mesh);
+    drawMesh(buildSvg(1000), mesh);
 }
 
 function visualizePoints(svg, points) {
@@ -131,4 +130,20 @@ function visualizePoints(svg, points) {
         .attr('cx', function (d) { return d[0]; })
         .attr('cy', function (d) { return d[1]; })
         .attr('r', 1);
+}
+
+function drawTriangle(tri) {
+    var path = d3.path();
+    path.moveTo(tri[0][0], tri[0][1]);
+    for (var i = 1; i < tri.length; i++) {
+        path.lineTo(tri[i][0], tri[i][1]);
+    }
+    return path.toString();
+}
+
+function drawMesh(svg, mesh) {
+    var paths = svg.selectAll('path-field').data(mesh.triangles);
+    paths.enter().append('path').classed('field', true);
+    paths.exit().remove();
+    svg.selectAll('path.field').attr('d', drawTriangle).attr("stroke", "black").attr("stroke-width", 1).attr("fill", "none");
 }
